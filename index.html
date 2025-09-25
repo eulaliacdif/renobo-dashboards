@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tablero de Indicadores RenoBo</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Tipografías: Montserrat (principal) + Lato (secundaria) -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --reno-dark:  #003031;
+      --reno-green: #035944;
+      --reno-purple:#594EEA;
+      --reno-red:   #E22232;
+    }
+    body { font-family: "Montserrat", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; background: #ffffff; color: var(--reno-dark); }
+    .card { background: #fff; border-radius: 1rem; box-shadow: 0 8px 24px rgba(0,0,0,.06); }
+    .btn { display:inline-flex; align-items:center; justify-content:center; padding:.625rem 1rem; border-radius: .875rem; font-weight: 700; transition: transform .05s ease, filter .2s ease; }
+    .btn-primary { background: var(--reno-dark); color: #fff; }
+    .btn-primary:hover { filter: brightness(.95); }
+    .btn-primary:active { transform: translateY(1px); }
+    .accent-red    { border-top: 6px solid var(--reno-red); }
+    .accent-green  { border-top: 6px solid var(--reno-green); }
+    .accent-purple { border-top: 6px solid var(--reno-purple); }
+  </style>
+</head>
+<body class="min-h-screen">
+  <header class="border-b border-gray-100">
+    <div class="max-w-6xl mx-auto pt-10 px-4 pb-6">
+      <h1 class="mt-2 text-3xl md:text-4xl font-extrabold tracking-tight" style="color:var(--reno-dark)">Tablero de Indicadores RenoBo</h1>
+      <p class="text-sm mt-2 text-gray-600">Selecciona un tablero y escribe su clave para abrirlo.</p>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-8 grid gap-6 md:grid-cols-3">
+    <article class="card p-5 flex flex-col accent-red">
+      <div class="flex-1">
+        <h2 class="text-lg font-bold" style="color:var(--reno-dark)">Reúso de edificaciones</h2>
+        <p class="text-sm text-gray-600 mt-1">Indicadores y analítica de aprovechamiento de edificaciones.</p>
+      </div>
+      <button class="mt-6 btn btn-primary" onclick="openGate(1)">Abrir</button>
+    </article>
+
+    <article class="card p-5 flex flex-col accent-green">
+      <div class="flex-1">
+        <h2 class="text-lg font-bold" style="color:var(--reno-dark)">Suelo Para mi Casa</h2>
+        <p class="text-sm text-gray-600 mt-1">Tablero de habilitación y seguimiento de suelo.</p>
+      </div>
+      <button class="mt-6 btn btn-primary" onclick="openGate(2)">Abrir</button>
+    </article>
+
+    <article class="card p-5 flex flex-col accent-purple">
+      <div class="flex-1">
+        <h2 class="text-lg font-bold" style="color:var(--reno-dark)">ZIBo</h2>
+        <p class="text-sm text-gray-600 mt-1">Zonas de interés y base operativa.</p>
+      </div>
+      <button class="mt-6 btn btn-primary" onclick="openGate(3)">Abrir</button>
+    </article>
+  </main>
+
+  <footer class="max-w-6xl mx-auto px-4 pb-10 text-xs text-gray-500 text-center space-y-4">
+    <div>
+      <img src="85b1e625-f985-472b-98b9-80b532afdf1d.png" alt="Logo RenoBo" class="mx-auto h-16" />
+    </div>
+    <p id="last-updated"></p>
+  </footer>
+
+  <script>
+    const gates = {
+      1: { url: "https://lookerstudio.google.com/reporting/49daeb69-b21f-43cb-bb42-42014937f787/page/kG9YF", pass: "renobo1" },
+      2: { url: "https://lookerstudio.google.com/reporting/49daeb69-b21f-43cb-bb42-42014937f787/page/kG9YF", pass: "renobo2" },
+      3: { url: "https://lookerstudio.google.com/reporting/49daeb69-b21f-43cb-bb42-42014937f787/page/kG9YF", pass: "renobo3" }
+    };
+
+    function openGate(id){
+      const gate = gates[id];
+      if(!gate){ alert("Enlace no configurado"); return; }
+      const ans = prompt("Ingresa la clave para abrir: " + (id===1?"Reúso de edificaciones": id===2?"Suelo Para mi Casa":"ZIBo"));
+      if(ans === null) return;
+      if(ans === gate.pass){ window.location.href = gate.url; }
+      else { alert("Clave incorrecta. Verifica e inténtalo de nuevo."); }
+    }
+
+    // Fecha de última actualización automática
+    const updated = new Date(document.lastModified);
+    document.getElementById("last-updated").textContent = "Última actualización: " + updated.toLocaleDateString("es-CO", {year:"numeric", month:"long", day:"numeric"});
+  </script>
+</body>
+</html>
