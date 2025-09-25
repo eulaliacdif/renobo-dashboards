@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboards | RenoBo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{ --reno-dark:#003031; }
+    body{ font-family:"Montserrat",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; background:#fff; color:var(--reno-dark); }
+    .card{ background:#fff; border:1px solid #eef2f2; border-radius:16px; padding:20px; box-shadow:0 6px 18px rgba(0,0,0,.04); }
+    .link-tile{ display:block; text-decoration:none; padding:14px 16px; border-radius:12px; text-align:center; font-weight:800; border:1px solid #e6ecec; cursor: pointer; }
+    .link-tile:hover{ background:#f8faf9; }
+    .page{ max-width:960px; margin:0 auto; padding:40px 16px; }
+    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
+    .modal-content { background-color: #fefefe; margin: 15% auto; padding: 20px; border-radius: 16px; width: 90%; max-width: 400px; box-shadow: 0 6px 18px rgba(0,0,0,0.2); }
+    .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+    .close:hover { color: #000; }
+    .password-input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #e6ecec; border-radius: 8px; font-size: 16px; }
+    .password-btn { background-color: var(--reno-dark); color: white; padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; width: 100%; font-weight: 600; }
+    .password-btn:hover { opacity: 0.9; }
+    .error-message { color: #e53e3e; font-size: 14px; margin-top: 5px; display: none; }
+    
+    /* Estilos para el logo en la esquina superior derecha */
+    .logo-corner {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 100;
+      height: 60px;
+    }
+    
+    /* Ajuste del header para no superponerse con el logo */
+    header.page {
+      padding-right: 100px; /* Espacio para el logo */
+    }
+    
+    /* Estilos para el footer actualizado */
+    footer.page {
+      border-top: 1px solid #e6ecec;
+      margin-top: 40px;
+      padding-top: 20px;
+    }
+    
+    @media (max-width: 768px) {
+      .logo-corner {
+        position: relative;
+        top: auto;
+        right: auto;
+        height: 50px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+      header.page {
+        padding-right: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Logo en la esquina superior derecha -->
+  <div class="logo-corner">
+    <img src="renobo-logo.png" alt="RenoBo" class="h-full">
+  </div>
+
+  <header class="page">
+    <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">Dashboards RenoBo</h1>
+    <p class="text-sm text-gray-600 mt-2">Selecciona el tablero que quieres abrir.</p>
+  </header>
+
+  <main class="page grid gap-6 md:grid-cols-3">
+    <!-- Tarjetas de dashboard con protección por contraseña -->
+    <div class="card link-tile" data-dashboard="reuso" data-password="reuso123" data-url="https://lookerstudio.google.com/reporting/49daeb69-b21f-43cb-bb42-42014937f787/page/kG9YF">
+      Reúso de edificaciones
+    </div>
+    <div class="card link-tile" data-dashboard="suelo" data-password="suelo456" data-url="https://lookerstudio.google.com/reporting/49daeb69-b21f-43cb-bb42-42014937f787/page/kG9YF">
+      Suelo Para mi Casa
+    </div>
+    <div class="card link-tile" data-dashboard="zibo" data-password="zibo789" data-url="https://lookerstudio.google.com/reporting/49daeb69-b21f-43cb-bb42-42014937f787/page/kG9YF">
+      ZIBo
+    </div>
+  </main>
+
+  <!-- Modal para ingresar contraseña -->
+  <div id="passwordModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2 id="modalTitle" class="text-xl font-bold mb-4">Ingresar contraseña</h2>
+      <p id="modalDescription" class="text-gray-600 mb-4">Para acceder a este dashboard, ingresa la contraseña correspondiente.</p>
+      <input type="password" id="passwordInput" class="password-input" placeholder="Contraseña">
+      <div id="errorMessage" class="error-message">Contraseña incorrecta. Inténtalo de nuevo.</div>
+      <button id="submitPassword" class="password-btn mt-4">Acceder</button>
+    </div>
+  </div>
+
+  <footer class="page text-center text-xs text-gray-500 space-y-4">
+    <p>Realizado por: Dirección Técnica Comercial</p>
+    <p id="last-updated"></p>
+  </footer>
+
+  <script>
+    // Fecha de última actualización automática (se actualiza con cada commit/deploy)
+    const d = new Date(document.lastModified);
+    document.getElementById('last-updated').textContent = 'Última actualización: ' + d.toLocaleDateString('es-CO', {year:'numeric', month:'long', day:'numeric'});
+
+    // Variables para el control del modal
+    const modal = document.getElementById('passwordModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalDescription = document.getElementById('modalDescription');
+    const passwordInput = document.getElementById('passwordInput');
+    const errorMessage = document.getElementById('errorMessage');
+    const submitButton = document.getElementById('submitPassword');
+    const closeBtn = document.querySelector('.close');
+    
+    // Variables para almacenar información del dashboard seleccionado
+    let currentDashboard = null;
+    let currentPassword = null;
+    let currentUrl = null;
+
+    // Agregar eventos a las tarjetas de dashboard
+    document.querySelectorAll('.link-tile').forEach(tile => {
+      tile.addEventListener('click', function() {
+        currentDashboard = this.getAttribute('data-dashboard');
+        currentPassword = this.getAttribute('data-password');
+        currentUrl = this.getAttribute('data-url');
+        
+        // Actualizar el modal con la información del dashboard
+        modalTitle.textContent = `Acceder a: ${this.textContent.trim()}`;
+        modalDescription.textContent = `Para acceder al dashboard "${this.textContent.trim()}", ingresa la contraseña correspondiente.`;
+        
+        // Mostrar el modal
+        modal.style.display = 'block';
+        passwordInput.value = '';
+        errorMessage.style.display = 'none';
+        passwordInput.focus();
+      });
+    });
+
+    // Cerrar modal al hacer clic en la X
+    closeBtn.addEventListener('click', function() {
+      modal.style.display = 'none';
+    });
+
+    // Cerrar modal al hacer clic fuera del contenido
+    window.addEventListener('click', function(event) {
+      if (event.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
+
+    // Manejar el envío de la contraseña
+    submitButton.addEventListener('click', function() {
+      const enteredPassword = passwordInput.value;
+      
+      if (enteredPassword === currentPassword) {
+        // Contraseña correcta, redirigir al dashboard
+        window.open(currentUrl, '_blank');
+        modal.style.display = 'none';
+      } else {
+        // Contraseña incorrecta, mostrar error
+        errorMessage.style.display = 'block';
+        passwordInput.focus();
+      }
+    });
+
+    // Permitir enviar la contraseña con la tecla Enter
+    passwordInput.addEventListener('keyup', function(event) {
+      if (event.key === 'Enter') {
+        submitButton.click();
+      }
+    });
+  </script>
+</body>
+</html>
