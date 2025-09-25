@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboards | RenoBo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{ --reno-dark:#003031; }
+    body{ font-family:"Montserrat",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; background:#fff; color:var(--reno-dark); }
+    .card{ background:#fff; border:1px solid #eef2f2; border-radius:16px; padding:20px; box-shadow:0 6px 18px rgba(0,0,0,.04); }
+    .link-tile{ display:block; text-decoration:none; padding:14px 16px; border-radius:12px; text-align:center; font-weight:800; border:1px solid #e6ecec; }
+    .link-tile:hover{ background:#f8faf9; }
+    .page{ max-width:960px; margin:0 auto; padding:40px 16px; }
+  </style>
+</head>
+<body>
+  <header class="page">
+    <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">Dashboards RenoBo</h1>
+    <p class="text-sm text-gray-600 mt-2">Selecciona el tablero que quieres abrir.</p>
+  </header>
+
+  <main class="page grid gap-6 md:grid-cols-3">
+    <!-- SOLO LINKS DIRECTOS, SIN CLAVES NI PROMPTS -->
+    <a class="card link-tile" href="https://lookerstudio.google.com/reporting/49daeb69-b21f-43cb-bb42-42014937f787/page/kG9YF" target="_blank" rel="noopener">Reúso de edificaciones</a>
+    <a class="card link-tile" href="https://lookerstudio.google.com/reporting/49daeb69-b21f-43cb-bb42-42014937f787/page/kG9YF" target="_blank" rel="noopener">Suelo Para mi Casa</a>
+    <a class="card link-tile" href="https://lookerstudio.google.com/reporting/49daeb69-b21f-43cb-bb42-42014937f787/page/kG9YF" target="_blank" rel="noopener">ZIBo</a>
+  </main>
+
+  <footer class="page text-center text-xs text-gray-500 space-y-4">
+    <!-- IMPORTANTE: asegúrate de subir el archivo del logo a tu repo en 'assets/renobo-logo.png' -->
+    <img src="assets/renobo-logo.png" alt="Logo RenoBo" class="mx-auto h-16" />
+    <p id="last-updated"></p>
+  </footer>
+
+  <script>
+    // Fecha de última actualización automática (se actualiza con cada commit/deploy)
+    const d = new Date(document.lastModified);
+    document.getElementById('last-updated').textContent = 'Última actualización: ' + d.toLocaleDateString('es-CO', {year:'numeric', month:'long', day:'numeric'});
+  </script>
+</body>
+</html>
